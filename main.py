@@ -1,9 +1,12 @@
 import arcade
 
 
+# Creates player
 class Ramez(arcade.Sprite):
+    #
     def __init__(self):
-        super().__init__("sprites/Ramez.png", 1)
+        #
+        super().__init__("sprites/PlayerTemp.png", 1)
         self.center_x = 200
         self.center_y = 300
 
@@ -15,6 +18,13 @@ class Main(arcade.Window):
 
         # Sprites
         self.player = Ramez()
+
+        # Movement
+
+        self.up_held = False
+        self.down_held = False
+        self.right_held = False
+        self.left_held = False
 
         arcade.set_background_color(arcade.color.WINE)
 
@@ -30,7 +40,41 @@ class Main(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
+            self.up_held = True
+            print("up true")
+        elif key == arcade.key.DOWN:
+            self.down_held = True
+            print("down true")
+        elif key == arcade.key.RIGHT:
+            self.right_held = True
+            print("right true")
+        elif key == arcade.key.LEFT:
+            self.left_held = True
+            print("left true")
+
+    def on_key_release(self, key, modifiers):
+        if key == arcade.key.UP:
+            self.up_held = False
+            print("up false")
+        elif key == arcade.key.DOWN:
+            self.down_held = False
+            print("down false")
+        elif key == arcade.key.RIGHT:
+            self.right_held = False
+            print("right false")
+        elif key == arcade.key.LEFT:
+            self.left_held = False
+            print("left false")
+
+    def move_handler(self):
+        if self.up_held:
             self.player.center_y += 5
+        elif self.down_held:
+            self.player.center_y -= 5
+        elif self.right_held:
+            self.player.center_x += 5
+        elif self.left_held:
+            self.player.center_x -=5
 
 
 def main():
