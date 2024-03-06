@@ -2,7 +2,7 @@ import arcade
 
 
 # Creates player
-class Ramez(arcade.Sprite):
+class Player(arcade.Sprite):
     #
     def __init__(self):
         #
@@ -17,7 +17,7 @@ class Main(arcade.Window):
         self.set_location(400, 200)
 
         # Sprites
-        self.player = Ramez()
+        self.player = Player()
 
         # Movement
 
@@ -37,6 +37,9 @@ class Main(arcade.Window):
         #  self.player_list.draw()
 
         self.player.draw()
+
+    def on_update(self, delta_time: float):
+        self.move_handler()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
@@ -69,17 +72,19 @@ class Main(arcade.Window):
     def move_handler(self):
         if self.up_held:
             self.player.center_y += 5
-        elif self.down_held:
+        if self.down_held:
             self.player.center_y -= 5
-        elif self.right_held:
+        if self.right_held:
             self.player.center_x += 5
-        elif self.left_held:
-            self.player.center_x -=5
-
+        if self.left_held:
+            self.player.center_x -= 5
+        self.player.draw()
+    
 
 def main():
     window = Main(640,  480, "Game")
     window.setup()
     arcade.run()
+
 
 main()
