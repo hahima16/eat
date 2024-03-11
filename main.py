@@ -3,21 +3,22 @@ import arcade
 
 # Creates player
 class Player(arcade.Sprite):
-    #
+    # Creates a player
     def __init__(self):
         #
-        super().__init__("sprites/PlayerTemp.png", 1)
-        self.center_x = 200
-        self.center_y = 300
+        super().__init__("sprites/PlayerTemp.png", 1)  # Image path
+        self.center_x = 200  # x-location
+        self.center_y = 300  # y-location
 
 
 class Main(arcade.Window):
+    # Setup for game
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         self.set_location(400, 200)
 
         # Sprites
-        self.player = Player()
+        self.player = Player()  # Calls player
 
         # Movement
 
@@ -38,9 +39,7 @@ class Main(arcade.Window):
 
         self.player.draw()
 
-    def on_update(self, delta_time: float):
-        self.move_handler()
-
+    # Movement, key pressed
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
             self.up_held = True
@@ -55,6 +54,7 @@ class Main(arcade.Window):
             self.left_held = True
             print("left true")
 
+    # Movement, key released
     def on_key_release(self, key, modifiers):
         if key == arcade.key.UP:
             self.up_held = False
@@ -79,8 +79,13 @@ class Main(arcade.Window):
         if self.left_held:
             self.player.center_x -= 5
         self.player.draw()
-    
 
+    # Calls functions every time screen updates
+    def on_update(self, delta_time: float):
+        self.move_handler()
+
+
+# Main function
 def main():
     window = Main(640,  480, "Game")
     window.setup()
