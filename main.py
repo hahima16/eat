@@ -1,7 +1,9 @@
+
 import arcade
 
-
 # Creates player
+
+
 class Player(arcade.Sprite):
     # Creates a player
     def __init__(self):
@@ -10,71 +12,65 @@ class Player(arcade.Sprite):
         self.center_y = 300  # y-location
 
 
+# Projectile class
+class Projectile(arcade.Sprite):
+    def __init__(self, start_x, start_y, target_x, target_y):
+        super().__init__("sprites/Bullet.png", 1)
+        self.center_x = start_x
+        self.center_y = start_y
+        self.target_x = target_x
+        self.target_y = target_y
+
+    def move_to_target(self):
+
+        pass
+
+
 class Main(arcade.Window):
-    # Setup for game
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         self.set_location(400, 200)
-
-        # Sprites
-        self.player = Player()  # Calls player
-
-        # Movement Booleans
+        self.player = Player()
+        self.projectile_list = arcade.SpriteList()  # List to hold projectiles
 
         self.up_held = False
         self.down_held = False
         self.right_held = False
         self.left_held = False
 
-        # Camera
-        self.camera = None
         self.camera = arcade.Camera(self.width, self.height)
-        self.camera.use()
-
         arcade.set_background_color(arcade.color.WINE)
 
-    # Setup required for python arcade; i don't know what it does
     def setup(self):
         pass
 
     def on_draw(self):
         self.clear()
         arcade.start_render()
-        #  self.player_list.draw()
-
+        self.camera.use()
         self.player.draw()
+        self.projectile_list.draw()  # Draw all projectiles
 
-    # Movement, key pressed
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP or key == arcade.key.W:
+        if key in (arcade.key.UP, arcade.key.W):
             self.up_held = True
-            print("up true")
-        elif key == arcade.key.DOWN or key == arcade.key.S:
+        elif key in (arcade.key.DOWN, arcade.key.S):
             self.down_held = True
-            print("down true")
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
+        elif key in (arcade.key.RIGHT, arcade.key.D):
             self.right_held = True
-            print("right true")
-        elif key == arcade.key.LEFT or arcade.key.A:
+        elif key in (arcade.key.LEFT, arcade.key.A):  # Fixed condition
             self.left_held = True
-            print("left true")
 
-    # Movement, key released
     def on_key_release(self, key, modifiers):
-        if key == arcade.key.UP or key == arcade.key.W:
+        if key in (arcade.key.UP, arcade.key.W):
             self.up_held = False
-            print("up false")
-        elif key == arcade.key.DOWN or key == arcade.key.S:
+        elif key in (arcade.key.DOWN, arcade.key.S):
             self.down_held = False
-            print("down false")
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
+        elif key in (arcade.key.RIGHT, arcade.key.D):
             self.right_held = False
-            print("right false")
-        elif key == arcade.key.LEFT or arcade.key.A:
+        elif key in (arcade.key.LEFT, arcade.key.A):  # Fixed condition
             self.left_held = False
-            print("left false")
 
-    # Movement handler, moves player by 5 when respective keypress boolean is True
     def move_handler(self):
         if self.up_held:
             self.player.center_y += 5
@@ -84,35 +80,44 @@ class Main(arcade.Window):
             self.player.center_x += 5
         if self.left_held:
             self.player.center_x -= 5
-        self.player.draw()
 
     def camera_handler(self):
-        screen_center_x = self.player.center_x - (self.camera.viewport_width / 2)
-        screen_center_y = self.player.center_y - (self.camera.viewport_height / 2)
+        p_x = self.player.center_x
+        p_y = self.player.center_y
 
-        if screen_center_x < 0:
-            screen_center_x = 0
-        elif screen_center_x > self.player.center_x:
-            screen_center_x = self.player.center_x
-        if screen_center_y < 0:
-            screen_center_y = 0
-        elif screen_center_y > self.player.center_y:
-            screen_center_y = self.player.center_y
+        # Calculate the 1/3rd thresholds of the screen
+        x_threshold = self.width / 3
+        y_threshold = self.height / 3
 
-        player_centered = screen_center_x, screen_center_y
-        self.camera.move_to(player_centered)
+        # Calculate the center of the screen/camera view
+        screen_center_x = self.camera.position[0] + self.width / 2
+        screen_center_y = self.camera.position[1] + self.height / 2
 
-    # Calls functions every time screen updates
+        # Determine if the player has moved beyond the 1/3rd thresholds
+        move_camera_x = p_x < screen_center_x - x_threshold or p_x > screen_center_x + x_threshold
+        move_camera_y = p_y < screen_center_y - y_threshold or p_y > screen_center_y + y_threshold
+
+        # Only move the camera if the player has moved beyond the threshold
+        if move_camera_x or move_camera_y:
+            target_camera_x = p_x - self.width / 2
+            target_camera_y = p_y - self.height / 2
+            self.camera.move_to((target_camera_x, target_camera_y), 0.025)  # Smoothness parameter can be adjusted
+
     def on_update(self, delta_time: float):
         self.camera_handler()
         self.move_handler()
+        print(self.camera.position)
+        print(self.player.position)
+        for projectile in self.projectile_list:
+            projectile.move_to_target()  # Uwwwwwpdate each projectile's position
 
-
-# Main function
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        projectile = Projectile(self.player.center_x, self.player.center_y, x, y)
 def main():
     window = Main(640,  480, "Game")
     window.setup()
     arcade.run()
 
 
-main()
+if __name__ == "__main__":
+    main()
