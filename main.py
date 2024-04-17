@@ -1,10 +1,10 @@
-
+import math
 import arcade
 
 # Creates player
 
 
-class Player(arcade.Sprite):
+class Player(arcade.Sprite):  # Player class
     # Creates a player
     def __init__(self):
         super().__init__("sprites/PlayerTemp.png", 1)  # Image path
@@ -13,16 +13,18 @@ class Player(arcade.Sprite):
 
 
 # Projectile class
-class Projectile(arcade.Sprite):
+class Projectile(arcade.Sprite):  # Ignore - Does not work
     def __init__(self, start_x, start_y, target_x, target_y):
         super().__init__("sprites/Bullet.png", 1)
         self.center_x = start_x
         self.center_y = start_y
         self.target_x = target_x
         self.target_y = target_y
+        self.change_x = 0  # Horizontal speed
+        self.change_y = 0  # Vertical speed
+        self.speed = 5  # Adjust speed as needed
 
     def move_to_target(self):
-
         pass
 
 
@@ -33,12 +35,12 @@ class Main(arcade.Window):
         self.player = Player()
         self.projectile_list = arcade.SpriteList()  # List to hold projectiles
 
-        self.up_held = False
+        self.up_held = False  # These will switch to True once the key is pressed
         self.down_held = False
         self.right_held = False
         self.left_held = False
 
-        self.camera = arcade.Camera(self.width, self.height)
+        self.camera = arcade.Camera(self.width, self.height)  # Arcade camera setup
         arcade.set_background_color(arcade.color.WINE)
 
     def setup(self):
@@ -49,7 +51,7 @@ class Main(arcade.Window):
         arcade.start_render()
         self.camera.use()
         self.player.draw()
-        self.projectile_list.draw()  # Draw all projectiles
+        self.projectile_list.draw()  # Draw all projectiles, DOES NOT WORK RN!!!
 
     def on_key_press(self, key, modifiers):
         if key in (arcade.key.UP, arcade.key.W):
@@ -111,8 +113,10 @@ class Main(arcade.Window):
         for projectile in self.projectile_list:
             projectile.move_to_target()  # Uwwwwwpdate each projectile's position
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-        projectile = Projectile(self.player.center_x, self.player.center_y, x, y)
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):  # Not implemented
+        pass
+
+
 def main():
     window = Main(640,  480, "Game")
     window.setup()
