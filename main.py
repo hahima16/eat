@@ -27,17 +27,24 @@ class Projectile(arcade.Sprite):  # Ignore - Does not work
         self.speed = 5  # Adjust speed as needed
 
     def move_to_target(self, target_x, target_y):
+        speed = 1
+
         while (self.center_x, self.center_y) != (target_x, target_y):
-            speed = self.speed
+
             if self.center_x > target_x:
                 self.center_x - speed
+                print("case 1")
             if self.center_y > target_y:
                 self.center_y - speed
-
+                print(self.center_y)
             if self.center_x < target_x:
                 self.center_x + speed
             if self.center_y < target_y:
                 self.center_y + speed
+                print("case 4")
+            break
+
+
         self.kill()  # Removes projectile once
         return "done"
 
