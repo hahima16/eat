@@ -26,6 +26,21 @@ class Projectile(arcade.Sprite):  # Ignore - Does not work
         self.change_y = 0  # Vertical speed
         self.speed = 5  # Adjust speed as needed
 
+    def move_to_target(self, target_x, target_y):
+        while (self.center_x, self.center_y) != (target_x, target_y):
+            speed = self.speed
+            if self.center_x > target_x:
+                self.center_x - speed
+            if self.center_y > target_y:
+                self.center_y - speed
+
+            if self.center_x < target_x:
+                self.center_x + speed
+            if self.center_y < target_y:
+                self.center_y + speed
+        self.kill()  # Removes projectile once
+        return "done"
+
 
 class Main(arcade.Window):
     def __init__(self, width, height, title):
@@ -42,7 +57,7 @@ class Main(arcade.Window):
         self.camera = arcade.Camera(self.width, self.height)  # Arcade camera setup
         arcade.set_background_color(arcade.color.WINE)
 
-    def setup(self):
+    def setup(self):  # Needed for arcade setup; unused.
         pass
 
     def on_draw(self):
@@ -59,7 +74,7 @@ class Main(arcade.Window):
             self.down_held = True
         elif key in (arcade.key.RIGHT, arcade.key.D):
             self.right_held = True
-        elif key in (arcade.key.LEFT, arcade.key.A):  # Fixed condition
+        elif key in (arcade.key.LEFT, arcade.key.A):
             self.left_held = True
 
     def on_key_release(self, key, modifiers):
@@ -69,7 +84,7 @@ class Main(arcade.Window):
             self.down_held = False
         elif key in (arcade.key.RIGHT, arcade.key.D):
             self.right_held = False
-        elif key in (arcade.key.LEFT, arcade.key.A):  # Fixed condition
+        elif key in (arcade.key.LEFT, arcade.key.A):
             self.left_held = False
 
     def move_handler(self):
@@ -107,15 +122,16 @@ class Main(arcade.Window):
     def on_update(self, delta_time: float):
         self.camera_handler()
         self.move_handler()
-        print(self.camera.position)
-        print(self.player.position)
+        # print(self.camera.position)
+        # print(self.player.position)
         for projectile in self.projectile_list:
-            projectile.move_to_target()  # Update each projectile's position
+            projectile.move_to_target(projectile.target_x, projectile.target_y)  # Update each projectile's position
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):  # Not implemented
+    def on_mouse_press(self, x, y, button, modifiers):  # Not implemented
+        print("Mousebutton Pressed!")
         projectile = Projectile(self.player.center_x, self.player.center_y, x, y)
+        self.projectile_list.append(projectile)
         projectile.draw()
-
 
 def main():
     window = Main(640,  480, "Game")
