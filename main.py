@@ -1,3 +1,5 @@
+# im losing it im losing it im losing it im losing it im losing it im losing it im losing it im losing it im losing it
+
 import math
 import arcade
 
@@ -23,9 +25,6 @@ class Projectile(arcade.Sprite):  # Ignore - Does not work
         self.change_x = 0  # Horizontal speed
         self.change_y = 0  # Vertical speed
         self.speed = 5  # Adjust speed as needed
-
-    def move_to_target(self):
-        pass
 
 
 class Main(arcade.Window):
@@ -103,7 +102,7 @@ class Main(arcade.Window):
         if move_camera_x or move_camera_y:
             target_camera_x = p_x - self.width / 2
             target_camera_y = p_y - self.height / 2
-            self.camera.move_to((target_camera_x, target_camera_y), 0.025)  # Smoothness parameter can be adjusted
+            self.camera.move_to((target_camera_x, target_camera_y), 0.025)  # Smoothness parameter
 
     def on_update(self, delta_time: float):
         self.camera_handler()
@@ -111,10 +110,11 @@ class Main(arcade.Window):
         print(self.camera.position)
         print(self.player.position)
         for projectile in self.projectile_list:
-            projectile.move_to_target()  # Uwwwwwpdate each projectile's position
+            projectile.move_to_target()  # Update each projectile's position
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):  # Not implemented
-        pass
+        projectile = Projectile(self.player.center_x, self.player.center_y, x, y)
+        projectile.draw()
 
 
 def main():
